@@ -1,0 +1,9 @@
+d<-read.table(file.choose())
+View(d)
+char<-as.character(d$V1)
+char
+vector<-c(char)
+vector
+temp<-strsplit(vector,"")
+temp
+table(unlist(temp))

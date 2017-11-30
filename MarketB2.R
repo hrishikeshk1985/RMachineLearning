@@ -1,0 +1,20 @@
+library(arules)
+library(arulesViz)
+data("Groceries")
+Groceries
+Gro=as(Groceries,"transactions")
+itemFrequencyPlot(Gro,topN=10,type="absolute")
+rules=apriori(Gro,parameter=list(support=0.001,confidence=0.9,maxlen=4))
+inspect(rules)
+ruleswmilk=apriori(Gro,parameter=list(support=0.0015,confidence=0.9),appearance = list(rhs=c("whole milk"),default="lhs"))
+inspect(ruleswmilk)
+ruleswmilk.df = as(ruleswmilk,"data.frame")
+ruleswmilk.df.sorted =ruleswmilk.df[order(ruleswmilk.df$lift,decreasing = T),]
+head(ruleswmilk.df.sorted)
+ruleslwmilk=apriori(Gro,parameter=list(support=0.0015,confidence=0.9),appearance = list(lhs=c("whole milk"),default="rhs"))
+inspect(ruleslwmilk)
+ruleslwmilk.df = as(ruleslwmilk,"data.frame")
+ruleslwmilk.df.sorted =ruleslwmilk.df[order(ruleslwmilk.df$lift,decreasing = T),]
+head(ruleslwmilk.df.sorted)
+library(arulesViz)
+plot(ruleswmilk, method="paracoord", control=list(reorder=TRUE))

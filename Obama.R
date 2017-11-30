@@ -1,0 +1,51 @@
+name=file.path("C:/Users/ADMIN/Desktop/casestudies/TextMining")
+length(dir(name))
+dir(name)
+library(tm)
+library(SnowballC)
+docs=VCorpus(DirSource(name))
+docs
+docs=tm_map(docs,tolower)
+docs= tm_map(docs, removeNumbers)
+docs = tm_map(docs, removePunctuation)
+docs = tm_map(docs, removeWords, stopwords("english"))
+docs = tm_map(docs, stripWhitespace)
+docs = tm_map(docs, stemDocument)
+docs =tm_map(docs, removeWords,c('applaus','can','cant','will','that','weve','dont','wont'))
+docs=tm_map(docs,PlainTextDocument)
+dtm=DocumentTermMatrix(docs)
+dim(dtm)
+dtm = removeSparseTerms(dtm,0.51)
+dim(dtm)
+rownames(dtm)=c("2010","2011","2012","2013","2014","2015")
+inspect(dtm)
+
+
+
+freq = colSums(as.matrix(dtm))
+ord=order(-freq)
+freq[head(ord)]
+freq[tail(ord)]
+findFreqTerms(dtm,100)
+findAssocs(dtm,"busi",corlimit=0.9)
+findAssocs(dtm, "job", corlimit=0.9)
+head(table(freq))
+tail(table(freq))
+findFreqTerms(dtm,100)
+library(wordcloud)
+wordcloud(names(freq),freq,min.freq=50,scale=c(3,0.5),colors=brewer.pal(6,"Dark2"))
+wordcloud(names(freq),freq,max.words = 30)
+freq=sort(colSums(as.matrix(dtm)),decreasing=TRUE)
+wf=data.frame(word=names(freq),freq=freq)
+wf=wf[1:10,]
+barplot(wf$freq,names=wf$word)
+
+
+library(topicmodels)
+set.seed(123)
+lda3=LDA(dtm,k=3,method="Gibbs")
+topics(lda3)
+set.seed(456)
+lda4=LDA(dtm,k=4,method="Gibbs")
+topics(lda4)
+terms(lda3,20)
